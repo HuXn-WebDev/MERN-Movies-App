@@ -20,7 +20,7 @@ router
   .get(authenticate, authorizeAdmin, getAllUsers);
 
 router.post("/auth", loginUser);
-router.post("/logout", logoutCurrentUser);
+router.post("/logout",authenticate, logoutCurrentUser);
 
 router
   .route("/profile")
