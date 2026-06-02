@@ -6,7 +6,7 @@ import {
   useGetRandomMoviesQuery,
 } from "../../redux/api/movies";
 import MovieCard from "./MovieCard";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import banner from "../../assets/banner.jpg";
 import {
@@ -30,10 +30,11 @@ const AllMovies = () => {
   const { data: topMovies } = useGetTopMoviesQuery();
   const { data: randomMovies } = useGetRandomMoviesQuery();
 
-  const movieYears = data?.map((movie) => movie.year);
-  const uniqueYears = Array.from(new Set(movieYears));
+  const movieYears = useMemo(() => data?.map((movie) => movie.year) || [], [data]);
+  const uniqueYears = useMemo(() => Array.from(new Set(movieYears)), [movieYears]);
 
   useEffect(() => {
+    // Only dispatch when data changes (movieYears and uniqueYears are memoized from data)
     dispatch(setFilteredMovies(data || []));
     dispatch(setMovieYears(movieYears));
     dispatch(setUniqueYears(uniqueYears));
