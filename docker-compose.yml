@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  mongo:
+    image: mongo:6.0
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - '3000:3000'
+    environment:
+      - PORT=3000
+      - MONGO_URI=mongodb://mongo:27017/mern-movies
+      - JWT_SECRET=devsecret
+    depends_on:
+      - mongo
+    volumes:
+      - .:/usr/src/app
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - '4173:4173'
+    environment:
+      - VITE_API_URL=http://localhost:3000/api/v1
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:

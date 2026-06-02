@@ -1,14 +1,23 @@
 {
   "name": "my-movies",
   "version": "1.0.0",
-  "description": "",
+  "description": "MERN Movies App with DevOps CI/CD scaffolding",
   "type": "module",
   "main": "index.js",
   "scripts": {
     "fullstack": "concurrently \"npm run backend\" \"npm run frontend\"",
     "backend": "nodemon backend/index.js",
     "frontend": "cd frontend && npm run dev",
-    "seed": "node backend/seeder.js"
+    "seed": "node backend/seeder.js",
+    "lint:backend": "npx eslint backend --ext .js",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "test:backend": "npx jest --runInBand --config jest.config.cjs",
+    "test": "npm run test:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "docker:build": "docker build -f Dockerfile.backend -t mern-movies-backend:latest . && docker build -f Dockerfile.frontend -t mern-movies-frontend:latest frontend",
+    "compose:up": "docker compose up --build",
+    "compose:down": "docker compose down"
   },
   "keywords": [],
   "author": "",
@@ -25,5 +34,15 @@
     "mongoose": "^8.1.1",
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.0.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.0",
+    "@babel/preset-env": "^7.25.0",
+    "babel-jest": "^29.6.0",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.0.0",
+    "jest": "^29.0.0",
+    "prettier": "^3.0.0",
+    "supertest": "^6.3.4"
   }
 }

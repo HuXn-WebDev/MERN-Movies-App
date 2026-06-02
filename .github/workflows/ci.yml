@@ -1,0 +1,49 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Lint, Test & Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install frontend dependencies
+        run: cd frontend && npm ci
+
+      - name: Run backend lint
+        run: npm run lint:backend
+
+      - name: Run frontend lint
+        run: cd frontend && npm run lint
+
+      - name: Run backend tests
+        run: npm test
+
+      - name: Build frontend assets
+        run: npm run build:frontend
+
+      - name: Build backend Docker image
+        run: docker build -f Dockerfile.backend -t mern-movies-backend:ci .
+
+      - name: Build frontend Docker image
+        run: docker build -f Dockerfile.frontend -t mern-movies-frontend:ci frontend
