@@ -6,7 +6,7 @@ import {
   useGetRandomMoviesQuery,
 } from "../../redux/api/movies";
 import MovieCard from "./MovieCard";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import banner from "../../assets/banner.jpg";
 import {
@@ -18,57 +18,67 @@ import {
 
 const AllMovies = () => {
   const dispatch = useDispatch();
-  const { data } = useGetAllMoviesQuery();
+  const { moviesFilter, filteredMovies } = useSelector((state) => state.movies);
+  const { data } = useGetAllMoviesQuery({
+    search: moviesFilter.searchTerm,
+    genre: moviesFilter.selectedGenre,
+    year: moviesFilter.selectedYear,
+    rating: moviesFilter.selectedRating,
+  });
   const { data: genres } = useFetchGenresQuery();
   const { data: newMovies } = useGetNewMoviesQuery();
   const { data: topMovies } = useGetTopMoviesQuery();
   const { data: randomMovies } = useGetRandomMoviesQuery();
 
-  const { moviesFilter, filteredMovies } = useSelector((state) => state.movies);
-
-  const movieYears = data?.map((movie) => movie.year);
-  const uniqueYears = Array.from(new Set(movieYears));
+  const movieYears = useMemo(() => data?.map((movie) => movie.year) || [], [data]);
+  const uniqueYears = useMemo(() => Array.from(new Set(movieYears)), [movieYears]);
 
   useEffect(() => {
+    // Only dispatch when data changes (movieYears and uniqueYears are memoized from data)
     dispatch(setFilteredMovies(data || []));
     dispatch(setMovieYears(movieYears));
     dispatch(setUniqueYears(uniqueYears));
-  }, [data, dispatch]);
+  }, [data, dispatch, movieYears, uniqueYears]);
 
   const handleSearchChange = (e) => {
-    dispatch(setMoviesFilter({ searchTerm: e.target.value }));
-
-    const filteredMovies = data.filter((movie) =>
-      movie.name.toLowerCase().includes(e.target.value.toLowerCase())
+    dispatch(
+      setMoviesFilter({ searchTerm: e.target.value, selectedSort: '' })
     );
-
-    dispatch(setFilteredMovies(filteredMovies));
   };
 
-  const handleGenreClick = (genreId) => {
-    const filterByGenre = data.filter((movie) => movie.genre === genreId);
-    dispatch(setFilteredMovies(filterByGenre));
+  const handleGenreChange = (genreId) => {
+    dispatch(
+      setMoviesFilter({ selectedGenre: genreId, selectedSort: '' })
+    );
   };
 
   const handleYearChange = (year) => {
-    const filterByYear = data.filter((movie) => movie.year === +year);
-    dispatch(setFilteredMovies(filterByYear));
+    dispatch(
+      setMoviesFilter({ selectedYear: year, selectedSort: '' })
+    );
+  };
+
+  const handleRatingChange = (rating) => {
+    dispatch(
+      setMoviesFilter({ selectedRating: rating, selectedSort: '' })
+    );
   };
 
   const handleSortChange = (sortOption) => {
-    switch (sortOption) {
-      case "new":
-        dispatch(setFilteredMovies(newMovies));
-        break;
-      case "top":
-        dispatch(setFilteredMovies(topMovies));
-        break;
-      case "random":
-        dispatch(setFilteredMovies(randomMovies));
-        break;
+    dispatch(setMoviesFilter({ selectedSort: sortOption }));
 
+    switch (sortOption) {
+      case 'new':
+        dispatch(setFilteredMovies(newMovies || []));
+        break;
+      case 'top':
+        dispatch(setFilteredMovies(topMovies || []));
+        break;
+      case 'random':
+        dispatch(setFilteredMovies(randomMovies || []));
+        break;
       default:
-        dispatch(setFilteredMovies([]));
+        dispatch(setFilteredMovies(data || []));
         break;
     }
   };
@@ -102,7 +112,7 @@ const AllMovies = () => {
                 <select
                   className="border p-2 rounded text-black"
                   value={moviesFilter.selectedGenre}
-                  onChange={(e) => handleGenreClick(e.target.value)}
+                  onChange={(e) => handleGenreChange(e.target.value)}
                 >
                   <option value="">Genres</option>
                   {genres?.map((genre) => (
@@ -123,6 +133,18 @@ const AllMovies = () => {
                       {year}
                     </option>
                   ))}
+                </select>
+
+                <select
+                  className="border p-2 rounded ml-4 text-black"
+                  value={moviesFilter.selectedRating}
+                  onChange={(e) => handleRatingChange(e.target.value)}
+                >
+                  <option value="">Rating</option>
+                  <option value="8">8+</option>
+                  <option value="6">6+</option>
+                  <option value="4">4+</option>
+                  <option value="2">2+</option>
                 </select>
 
                 <select

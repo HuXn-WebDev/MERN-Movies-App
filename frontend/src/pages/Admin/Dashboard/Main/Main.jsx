@@ -1,6 +1,5 @@
 import SecondaryCard from "./SecondaryCard";
 import VideoCard from "./VideoCard";
-import ReactTimeCard from "./RealTimeCard";
 
 import {
   useGetTopMoviesQuery,

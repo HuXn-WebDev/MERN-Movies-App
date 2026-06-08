@@ -1,0 +1,75 @@
+name: CD Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target deployment environment"
+        required: true
+        default: staging
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  build:
+    name: Build artifacts for deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install frontend dependencies
+        run: cd frontend && npm ci
+
+      - name: Build frontend
+        run: npm run build:frontend
+
+      - name: Build backend container image
+        run: docker build -f Dockerfile.backend -t mern-movies-backend:staging .
+
+      - name: Build frontend container image
+        run: docker build -f Dockerfile.frontend -t mern-movies-frontend:staging frontend
+
+  deploy-staging:
+    name: Deploy to Staging
+    needs: build
+    if: github.event.inputs.environment == 'staging'
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Placeholder staging deployment
+        run: |
+          echo "Staging deployment skeleton."
+          echo "Add Azure login, ACR push/pull, and App Service deployment commands here."
+          echo "Required secrets: ACR_LOGIN_SERVER, ACR_USERNAME, ACR_PASSWORD, AZURE_WEBAPP_NAME_STAGING."
+
+  deploy-production:
+    name: Deploy to Production
+    needs: build
+    if: github.event.inputs.environment == 'production'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Placeholder production deployment
+        run: |
+          echo "Production deployment skeleton."
+          echo "Add Azure login, ACR push/pull, and App Service deployment commands here."
+          echo "Required secrets: ACR_LOGIN_SERVER, ACR_USERNAME, ACR_PASSWORD, AZURE_WEBAPP_NAME_PRODUCTION."

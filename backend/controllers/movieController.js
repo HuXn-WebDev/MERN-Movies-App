@@ -12,7 +12,34 @@ const createMovie = async (req, res) => {
 
 const getAllMovies = async (req, res) => {
   try {
-    const movies = await Movie.find();
+    const { search, genre, year, rating } = req.query;
+    const query = {};
+
+    if (search) {
+      query.name = { $regex: search, $options: 'i' };
+    }
+
+    if (genre) {
+      query.genre = genre;
+    }
+
+    if (year) {
+      query.year = Number(year);
+    }
+
+    let movies = await Movie.find(query).populate('genre', 'name');
+
+    if (rating) {
+      const minRating = Number(rating);
+      movies = movies.filter((movie) => {
+        const averageRating = movie.reviews.length
+          ? movie.reviews.reduce((acc, item) => acc + item.rating, 0) /
+            movie.reviews.length
+          : 0;
+        return averageRating >= minRating;
+      });
+    }
+
     res.json(movies);
   } catch (error) {
     res.status(500).json({ error: error.message });
