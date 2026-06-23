@@ -1,8 +1,8 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { setupListeners } from "@reduxjs/toolkit/query/react";
-import { apiSlice } from "./api/apiSlice";
-import authReducer from "./features/auth/authSlice";
-import moviesReducer from "../redux/features/movies/moviesSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import { setupListeners } from '@reduxjs/toolkit/query/react';
+import { apiSlice } from './api/apiSlice';
+import authReducer from './features/auth/authSlice';
+import moviesReducer from '../redux/features/movies/moviesSlice';
 
 const store = configureStore({
   reducer: {
@@ -10,8 +10,7 @@ const store = configureStore({
     auth: authReducer,
     movies: moviesReducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(apiSlice.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(apiSlice.middleware),
   devTools: true,
 });
 

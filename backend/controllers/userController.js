@@ -1,17 +1,17 @@
-import User from "../models/User.js";
-import bcrypt from "bcryptjs";
-import asyncHandler from "../middlewares/asyncHandler.js";
-import createToken from "../utils/createToken.js";
+import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
+import asyncHandler from '../middlewares/asyncHandler.js';
+import createToken from '../utils/createToken.js';
 
 const createUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
-    throw new Error("Please fill all the fields");
+    throw new Error('Please fill all the fields');
   }
 
   const userExists = await User.findOne({ email });
-  if (userExists) res.status(400).send("User already exists");
+  if (userExists) res.status(400).send('User already exists');
 
   // Hash the user password
   const salt = await bcrypt.genSalt(10);
@@ -30,7 +30,7 @@ const createUser = asyncHandler(async (req, res) => {
     });
   } catch (error) {
     res.status(400);
-    throw new Error("Invalid user data");
+    throw new Error('Invalid user data');
   }
 });
 
@@ -40,10 +40,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
-    const isPasswordValid = await bcrypt.compare(
-      password,
-      existingUser.password
-    );
+    const isPasswordValid = await bcrypt.compare(password, existingUser.password);
 
     if (isPasswordValid) {
       createToken(res, existingUser._id);
@@ -55,20 +52,24 @@ const loginUser = asyncHandler(async (req, res) => {
         isAdmin: existingUser.isAdmin,
       });
     } else {
-      res.status(401).json({ message: "Invalid Password" });
+      res.status(401).json({ message: 'Invalid Password' });
     }
   } else {
-    res.status(401).json({ message: "User not found" });
+    res.status(401).json({ message: 'User not found' });
   }
 });
 
 const logoutCurrentUser = asyncHandler(async (req, res) => {
-  res.cookie("jwt", "", {
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  res.cookie('jwt', '', {
     httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'strict',
     expires: new Date(0),
   });
 
-  res.status(200).json({ message: "Logged out successfully" });
+  res.status(200).json({ message: 'Logged out successfully' });
 });
 
 const getAllUsers = asyncHandler(async (req, res) => {
@@ -87,7 +88,7 @@ const getCurrentUserProfile = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(404);
-    throw new Error("User not found.");
+    throw new Error('User not found.');
   }
 });
 
@@ -114,7 +115,7 @@ const updateCurrentUserProfile = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(404);
-    throw new Error("User not found");
+    throw new Error('User not found');
   }
 });
 

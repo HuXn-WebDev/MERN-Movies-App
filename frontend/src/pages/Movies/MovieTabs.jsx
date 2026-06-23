@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 const MovieTabs = ({ userInfo, submitHandler, comment, setComment, movie }) => {
   return (
@@ -21,10 +21,7 @@ const MovieTabs = ({ userInfo, submitHandler, comment, setComment, movie }) => {
               ></textarea>
             </div>
 
-            <button
-              type="submit"
-              className="bg-teal-600 text-white py-2 px-4 rounded-lg"
-            >
+            <button type="submit" className="bg-teal-600 text-white py-2 px-4 rounded-lg">
               Submit
             </button>
           </form>
@@ -40,15 +37,10 @@ const MovieTabs = ({ userInfo, submitHandler, comment, setComment, movie }) => {
 
         <div>
           {movie?.reviews.map((review) => (
-            <div
-              key={review._id}
-              className="bg-[#1A1A1A] p-4 rounded-lg w-[50%] mt-[2rem]"
-            >
+            <div key={review._id} className="bg-[#1A1A1A] p-4 rounded-lg w-[50%] mt-[2rem]">
               <div className="flex justify-between">
                 <strong className="text-[#B0B0B0]">{review.name}</strong>
-                <p className="text-[#B0B0B0]">
-                  {review.createdAt.substring(0, 10)}
-                </p>
+                <p className="text-[#B0B0B0]">{review.createdAt.substring(0, 10)}</p>
               </div>
 
               <p className="my-4">{review.comment}</p>

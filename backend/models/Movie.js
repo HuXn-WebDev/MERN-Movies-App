@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 const { ObjectId } = mongoose.Schema;
 
 const reviewSchema = mongoose.Schema(
@@ -9,7 +9,7 @@ const reviewSchema = mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "User",
+      ref: 'User',
     },
   },
   { timestamps: true }
@@ -20,7 +20,7 @@ const movieSchema = new mongoose.Schema(
     name: { type: String, required: true },
     image: { type: String },
     year: { type: Number, required: true },
-    genre: { type: ObjectId, ref: "Genre", required: true },
+    genre: { type: ObjectId, ref: 'Genre', required: true },
     detail: { type: String, required: true },
     cast: [{ type: String }],
     reviews: [reviewSchema],
@@ -30,5 +30,5 @@ const movieSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Movie = mongoose.model("Movie", movieSchema);
+const Movie = mongoose.model('Movie', movieSchema);
 export default Movie;

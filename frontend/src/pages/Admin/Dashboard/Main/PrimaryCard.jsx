@@ -1,4 +1,4 @@
-import { useGetUsersQuery } from "../../../../redux/api/users";
+import { useGetUsersQuery } from '../../../../redux/api/users';
 
 const PrimaryCard = () => {
   const { data: visitors } = useGetUsersQuery();

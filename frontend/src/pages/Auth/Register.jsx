@@ -1,16 +1,16 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import Loader from "../../component/Loader";
-import { setCredentials } from "../../redux/features/auth/authSlice";
-import { useRegisterMutation } from "../../redux/api/users";
-import { toast } from "react-toastify";
+import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import Loader from '../../component/Loader';
+import { setCredentials } from '../../redux/features/auth/authSlice';
+import { useRegisterMutation } from '../../redux/api/users';
+import { toast } from 'react-toastify';
 
 const Register = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const Register = () => {
 
   const { search } = useLocation();
   const sp = new URLSearchParams(search);
-  const redirect = sp.get("redirect") || "/";
+  const redirect = sp.get('redirect') || '/';
 
   useEffect(() => {
     if (userInfo) {
@@ -33,13 +33,13 @@ const Register = () => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error("Password do not match");
+      toast.error('Password do not match');
     } else {
       try {
         const res = await register({ username, email, password }).unwrap();
         dispatch(setCredentials({ ...res }));
         navigate(redirect);
-        toast.success("User successfully registered.");
+        toast.success('User successfully registered.');
       } catch (err) {
         console.log(err);
         toast.error(err.data.message);
@@ -54,10 +54,7 @@ const Register = () => {
 
         <form onSubmit={submitHandler} className="container w-[40rem]">
           <div className="my-[2rem]">
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-white"
-            >
+            <label htmlFor="name" className="block text-sm font-medium text-white">
               Name
             </label>
             <input
@@ -70,10 +67,7 @@ const Register = () => {
             />
           </div>
           <div className="my-[2rem]">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-white"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-white">
               Email Address
             </label>
             <input
@@ -86,10 +80,7 @@ const Register = () => {
             />
           </div>
           <div className="my-[2rem]">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-white"
-            >
+            <label htmlFor="password" className="block text-sm font-medium text-white">
               Password
             </label>
             <input
@@ -102,10 +93,7 @@ const Register = () => {
             />
           </div>
           <div className="my-[2rem]">
-            <label
-              htmlFor="confirmPassword"
-              className="block text-sm font-medium text-white"
-            >
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-white">
               Confirm Password
             </label>
             <input
@@ -123,7 +111,7 @@ const Register = () => {
             type="submit"
             className="bg-teal-500 text-white px-4 py-2 rounded cursor-pointer my-[1rem]"
           >
-            {isLoading ? "Registering..." : "Register"}
+            {isLoading ? 'Registering...' : 'Register'}
           </button>
 
           {isLoading && <Loader />}
@@ -131,9 +119,9 @@ const Register = () => {
 
         <div className="mt-4">
           <p className="text-white">
-            Already have an account?{" "}
+            Already have an account?{' '}
             <Link
-              to={redirect ? `/login?redirect=${redirect}` : "/login"}
+              to={redirect ? `/login?redirect=${redirect}` : '/login'}
               className="text-teal-500 hover:underline"
             >
               Login

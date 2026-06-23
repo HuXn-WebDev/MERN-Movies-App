@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
   return (
@@ -6,10 +6,7 @@ const Sidebar = () => {
       <aside className="text-white w-64 flex-shrink-0">
         <ul className="py-4">
           <li className="text-lg  bg-gradient-to-b from-green-500 to-lime-400 rounded-full -translate-x-6">
-            <Link
-              to="/admin/movies/dashboard"
-              className="block p-2 ml-20 mb-10"
-            >
+            <Link to="/admin/movies/dashboard" className="block p-2 ml-20 mb-10">
               Dashboard
             </Link>
           </li>

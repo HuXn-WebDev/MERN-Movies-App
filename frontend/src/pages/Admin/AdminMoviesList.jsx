@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
-import { useGetAllMoviesQuery } from "../../redux/api/movies";
+import { Link } from 'react-router-dom';
+import { useGetAllMoviesQuery } from '../../redux/api/movies';
 
 const AdminMoviesList = () => {
   const { data: movies } = useGetAllMoviesQuery();
@@ -8,9 +8,7 @@ const AdminMoviesList = () => {
     <div className="container mx-[9rem]">
       <div className="flex flex-col md:flex-row">
         <div className="p-3">
-          <div className="ml-[2rem] text-xl font-bold h-12">
-            All Movies ({movies?.length})
-          </div>
+          <div className="ml-[2rem] text-xl font-bold h-12">All Movies ({movies?.length})</div>
 
           <div className="flex flex-wrap justify-around items-center p-[2rem]">
             {movies?.map((movie) => (
@@ -24,11 +22,7 @@ const AdminMoviesList = () => {
                     key={movie._id}
                     className="max-w-sm  m-[2rem] rounded overflow-hidden shadow-lg"
                   >
-                    <img
-                      src={movie.image}
-                      alt={movie.name}
-                      className="w-full h-48 object-cover"
-                    />
+                    <img src={movie.image} alt={movie.name} className="w-full h-48 object-cover" />
                     <div className="px-6 py-4 border border-gray-400">
                       <div className="font-bold text-xl mb-2">{movie.name}</div>
                     </div>

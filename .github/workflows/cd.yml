@@ -1,0 +1,172 @@
+name: CD Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target deployment environment'
+        required: true
+        default: staging
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+  BACKEND_IMAGE_NAME: mernmoviesapp-backend
+  FRONTEND_IMAGE_NAME: mernmoviesapp-frontend
+
+jobs:
+  validate:
+    name: Validate Codebase Before Deployment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install frontend dependencies
+        run: npm ci --prefix frontend
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Run backend tests with coverage
+        run: npm run test:backend:coverage
+
+      - name: Run frontend tests with coverage
+        run: npm run test:frontend:coverage
+
+      - name: Build frontend assets
+        run: npm run build:frontend
+
+  deploy-staging-docker:
+    name: Deploy Staging with Docker and ACR
+    needs: validate
+    if: github.event.inputs.environment == 'staging'
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Login to ACR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build backend image
+        run: |
+          docker build \
+            -f Dockerfile.backend \
+            -t $ACR_LOGIN_SERVER/$BACKEND_IMAGE_NAME:latest \
+            .
+
+      - name: Build frontend image
+        run: |
+          docker build \
+            -f Dockerfile.frontend \
+            --build-arg VITE_API_URL=${{ secrets.STAGING_BACKEND_URL }} \
+            -t $ACR_LOGIN_SERVER/$FRONTEND_IMAGE_NAME:latest \
+            .
+
+      - name: Push backend image to ACR
+        run: docker push $ACR_LOGIN_SERVER/$BACKEND_IMAGE_NAME:latest
+
+      - name: Push frontend image to ACR
+        run: docker push $ACR_LOGIN_SERVER/$FRONTEND_IMAGE_NAME:latest
+
+      - name: Smoke test staging backend
+        run: |
+          echo "Waiting for Azure App Service Continuous Deployment..."
+          sleep 120
+
+          for i in {1..10}; do
+            echo "Health check attempt $i..."
+            if curl --fail --silent --show-error --max-time 15 "${{ secrets.STAGING_BACKEND_URL }}/api/v1/health"; then
+              echo "Staging backend is healthy."
+              exit 0
+            fi
+
+            echo "Backend not ready yet. Retrying in 30 seconds..."
+            sleep 30
+          done
+
+          echo "Staging backend health check failed."
+          exit 1
+
+  deploy-production-package:
+    name: Deploy Production with Package Deployment
+    needs: validate
+    if: github.event.inputs.environment == 'production'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install frontend dependencies
+        run: npm ci --prefix frontend
+
+      - name: Build frontend assets
+        run: npm run build:frontend
+        env:
+          VITE_API_URL: ${{ secrets.PRODUCTION_BACKEND_URL }}
+
+      - name: Create backend deployment package
+        run: |
+          mkdir -p deployment/backend
+          cp -r backend deployment/backend/
+          cp package*.json deployment/backend/
+          cp .babelrc deployment/backend/ 2>/dev/null || true
+          cp prometheus.yml deployment/backend/ 2>/dev/null || true
+
+      - name: Create frontend deployment package
+        run: |
+          mkdir -p deployment/frontend
+          cp -r frontend/dist/. deployment/frontend/
+
+      - name: Deploy backend to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.BACKEND_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_BACKEND_PUBLISH_PROFILE }}
+          package: deployment/backend
+
+      - name: Deploy frontend to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.FRONTEND_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_FRONTEND_PUBLISH_PROFILE }}
+          package: deployment/frontend
+
+      - name: Smoke test production backend
+        run: curl -f "${{ secrets.PRODUCTION_BACKEND_URL }}/api/v1/health"

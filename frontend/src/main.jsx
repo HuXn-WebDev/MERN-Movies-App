@@ -1,29 +1,29 @@
-import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
-import "./index.css";
-import store from "./redux/store.js";
-import { Provider } from "react-redux";
-import { Route, RouterProvider, createRoutesFromElements } from "react-router";
-import { createBrowserRouter } from "react-router-dom";
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
+import store from './redux/store.js';
+import { Provider } from 'react-redux';
+import { Route, RouterProvider, createRoutesFromElements } from 'react-router';
+import { createBrowserRouter } from 'react-router-dom';
 
 // Auth
-import AdminRoute from "./pages/Admin/AdminRoute.jsx";
-import GenreList from "./pages/Admin/GenreList.jsx";
+import AdminRoute from './pages/Admin/AdminRoute.jsx';
+import GenreList from './pages/Admin/GenreList.jsx';
 
 // Restricted
-import Login from "./pages/Auth/Login.jsx";
-import Register from "./pages/Auth/Register.jsx";
-import PrivateRoute from "./pages/Auth/PrivateRoute.jsx";
+import Login from './pages/Auth/Login.jsx';
+import Register from './pages/Auth/Register.jsx';
+import PrivateRoute from './pages/Auth/PrivateRoute.jsx';
 
-import Home from "./pages/Home.jsx";
-import Profile from "./pages/User/Profile.jsx";
-import AdminMoviesList from "./pages/Admin/AdminMoviesList.jsx";
-import UpdateMovie from "./pages/Admin/UpdateMovie.jsx";
-import CreateMovie from "./pages/Admin/CreateMovie.jsx";
-import AllMovies from "./pages/Movies/AllMovies.jsx";
-import MovieDetails from "./pages/Movies/MovieDetails.jsx";
-import AllComments from "./pages/Admin/AllComments.jsx";
-import AdminDashboard from "./pages/Admin/Dashboard/AdminDashboard.jsx";
+import Home from './pages/Home.jsx';
+import Profile from './pages/User/Profile.jsx';
+import AdminMoviesList from './pages/Admin/AdminMoviesList.jsx';
+import UpdateMovie from './pages/Admin/UpdateMovie.jsx';
+import CreateMovie from './pages/Admin/CreateMovie.jsx';
+import AllMovies from './pages/Movies/AllMovies.jsx';
+import MovieDetails from './pages/Movies/MovieDetails.jsx';
+import AllComments from './pages/Admin/AllComments.jsx';
+import AdminDashboard from './pages/Admin/Dashboard/AdminDashboard.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -50,7 +50,7 @@ const router = createBrowserRouter(
   )
 );
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <RouterProvider router={router} />
   </Provider>

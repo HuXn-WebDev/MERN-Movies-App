@@ -1,12 +1,12 @@
-import path from "path";
-import express from "express";
-import multer from "multer";
+import path from 'path';
+import express from 'express';
+import multer from 'multer';
 
 const router = express.Router();
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/");
+    cb(null, 'uploads/');
   },
 
   filename: (req, file, cb) => {
@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
   const filetypes = /jpe?g|png|webp/;
-  const mimetypes = /image\/jpe?g|image\/png||image\/webp/;
+  const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
 
   const extname = path.extname(file.originalname);
   const mimetype = file.mimetype;
@@ -25,24 +25,27 @@ const fileFilter = (req, file, cb) => {
   if (filetypes.test(extname) && mimetypes.test(mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error("Images only"), false);
+    req.fileValidationError = 'Images only';
+    cb(null, false);
   }
 };
 
 const upload = multer({ storage, fileFilter });
-const uploadSingleImage = upload.single("image");
+const uploadSingleImage = upload.single('image');
 
-router.post("/", (req, res) => {
+router.post('/', (req, res) => {
   uploadSingleImage(req, res, (err) => {
     if (err) {
       res.status(400).send({ message: err.message });
+    } else if (req.fileValidationError) {
+      res.status(400).send({ message: req.fileValidationError });
     } else if (req.file) {
       res.status(200).send({
-        message: "Image uploaded successfully",
+        message: 'Image uploaded successfully',
         image: `/${req.file.path}`,
       });
     } else {
-      res.status(400).send({ message: "No image file provided" });
+      res.status(400).send({ message: 'No image file provided' });
     }
   });
 });

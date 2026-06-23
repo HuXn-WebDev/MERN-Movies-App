@@ -1,13 +1,9 @@
-import SecondaryCard from "./SecondaryCard";
-import VideoCard from "./VideoCard";
-import ReactTimeCard from "./RealTimeCard";
+import SecondaryCard from './SecondaryCard';
+import VideoCard from './VideoCard';
 
-import {
-  useGetTopMoviesQuery,
-  useGetAllMoviesQuery,
-} from "../../../../redux/api/movies";
-import { useGetUsersQuery } from "../../../../redux/api/users";
-import RealTimeCard from "./RealTimeCard";
+import { useGetTopMoviesQuery, useGetAllMoviesQuery } from '../../../../redux/api/movies';
+import { useGetUsersQuery } from '../../../../redux/api/users';
+import RealTimeCard from './RealTimeCard';
 
 const Main = () => {
   const { data: topMovies } = useGetTopMoviesQuery();
@@ -15,10 +11,7 @@ const Main = () => {
   const { data: allMovies } = useGetAllMoviesQuery();
 
   const totalCommentsLength = allMovies?.map((m) => m.numReviews);
-  const sumOfCommentsLength = totalCommentsLength?.reduce(
-    (acc, length) => acc + length,
-    0
-  );
+  const sumOfCommentsLength = totalCommentsLength?.reduce((acc, length) => acc + length, 0);
 
   return (
     <div>

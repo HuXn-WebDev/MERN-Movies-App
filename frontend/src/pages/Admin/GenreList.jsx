@@ -1,20 +1,20 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   useCreateGenreMutation,
   useUpdateGenreMutation,
   useDeleteGenreMutation,
   useFetchGenresQuery,
-} from "../../redux/api/genre";
+} from '../../redux/api/genre';
 
-import { toast } from "react-toastify";
-import GenreForm from "../../component/GenreForm";
-import Modal from "../../component/Modal";
+import { toast } from 'react-toastify';
+import GenreForm from '../../component/GenreForm';
+import Modal from '../../component/Modal';
 
 const GenreList = () => {
   const { data: genres, refetch } = useFetchGenresQuery();
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const [selectedGenre, setSelectedGenre] = useState(null);
-  const [updatingName, setUpdatingName] = useState("");
+  const [updatingName, setUpdatingName] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
 
   const [createGenre] = useCreateGenreMutation();
@@ -25,7 +25,7 @@ const GenreList = () => {
     e.preventDefault();
 
     if (!name) {
-      toast.error("Genre name is required");
+      toast.error('Genre name is required');
       return;
     }
 
@@ -35,13 +35,13 @@ const GenreList = () => {
       if (result.error) {
         toast.error(result.error);
       } else {
-        setName("");
+        setName('');
         toast.success(`${result.name} is created.`);
         refetch();
       }
     } catch (error) {
       console.error(error);
-      toast.error("Creating genre failed, try again.");
+      toast.error('Creating genre failed, try again.');
     }
   };
 
@@ -49,7 +49,7 @@ const GenreList = () => {
     e.preventDefault();
 
     if (!updateGenre) {
-      toast.error("Genre name is required");
+      toast.error('Genre name is required');
       return;
     }
 
@@ -67,7 +67,7 @@ const GenreList = () => {
         toast.success(`${result.name} is updated`);
         refetch();
         setSelectedGenre(null);
-        setUpdatingName("");
+        setUpdatingName('');
         setModalVisible(false);
       }
     } catch (error) {
@@ -89,7 +89,7 @@ const GenreList = () => {
       }
     } catch (error) {
       console.error(error);
-      toast.error("Genre deletion failed. Tray again.");
+      toast.error('Genre deletion failed. Tray again.');
     }
   };
 
@@ -97,11 +97,7 @@ const GenreList = () => {
     <div className="ml-[10rem] flex flex-col md:flex-row">
       <div className="md:w-3/4 p-3">
         <h1 className="h-12">Manage Genres</h1>
-        <GenreForm
-          value={name}
-          setValue={setName}
-          handleSubmit={handleCreateGenre}
-        />
+        <GenreForm value={name} setValue={setName} handleSubmit={handleCreateGenre} />
 
         <br />
 

@@ -1,10 +1,4 @@
-const GenreForm = ({
-  value,
-  setValue,
-  handleSubmit,
-  buttonText = "Submit",
-  handleDelete,
-}) => {
+const GenreForm = ({ value, setValue, handleSubmit, buttonText = 'Submit', handleDelete }) => {
   return (
     <div className="p-3">
       <form onSubmit={handleSubmit} className="space-y-3">

@@ -1,13 +1,14 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const moviesSlice = createSlice({
-  name: "movies",
+  name: 'movies',
   initialState: {
     moviesFilter: {
-      searchTerm: "",
-      selectedGenre: "",
-      selectedYear: "",
-      selectedSort: [],
+      searchTerm: '',
+      selectedGenre: '',
+      selectedYear: '',
+      selectedRating: '',
+      selectedSort: '',
     },
 
     filteredMovies: [],
@@ -34,11 +35,7 @@ const moviesSlice = createSlice({
   },
 });
 
-export const {
-  setMoviesFilter,
-  setFilteredMovies,
-  setMovieYears,
-  setUniqueYears,
-} = moviesSlice.actions;
+export const { setMoviesFilter, setFilteredMovies, setMovieYears, setUniqueYears } =
+  moviesSlice.actions;
 
 export default moviesSlice.reducer;

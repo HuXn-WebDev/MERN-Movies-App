@@ -1,5 +1,5 @@
-import { useGetUsersQuery } from "../../../../redux/api/users";
-import PrimaryCard from "./PrimaryCard";
+import { useGetUsersQuery } from '../../../../redux/api/users';
+import PrimaryCard from './PrimaryCard';
 
 const RealTimeCard = () => {
   const { data: visitors } = useGetUsersQuery();

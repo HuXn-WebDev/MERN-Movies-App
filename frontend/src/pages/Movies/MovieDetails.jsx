@@ -1,21 +1,17 @@
-import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import {
-  useGetSpecificMovieQuery,
-  useAddMovieReviewMutation,
-} from "../../redux/api/movies";
-import MovieTabs from "./MovieTabs";
+import { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { useGetSpecificMovieQuery, useAddMovieReviewMutation } from '../../redux/api/movies';
+import MovieTabs from './MovieTabs';
 
 const MovieDetails = () => {
   const { id: movieId } = useParams();
   const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
   const { data: movie, refetch } = useGetSpecificMovieQuery(movieId);
   const { userInfo } = useSelector((state) => state.auth);
-  const [createReview, { isLoading: loadingMovieReview }] =
-    useAddMovieReviewMutation();
+  const [createReview, { isLoading: loadingMovieReview }] = useAddMovieReviewMutation();
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -29,7 +25,7 @@ const MovieDetails = () => {
 
       refetch();
 
-      toast.success("Review created successfully");
+      toast.success('Review created successfully');
     } catch (error) {
       toast.error(error.data || error.message);
     }
@@ -38,21 +34,14 @@ const MovieDetails = () => {
   return (
     <>
       <div>
-        <Link
-          to="/"
-          className="  text-white font-semibold hover:underline ml-[20rem]"
-        >
+        <Link to="/" className="  text-white font-semibold hover:underline ml-[20rem]">
           Go Back
         </Link>
       </div>
 
       <div className="mt-[2rem]">
         <div className="flex justify-center items-center">
-          <img
-            src={movie?.image}
-            alt={movie?.name}
-            className="w-[70%] rounded"
-          />
+          <img src={movie?.image} alt={movie?.name} className="w-[70%] rounded" />
         </div>
         {/* Container One */}
         <div className="container  flex justify-between ml-[20rem] mt-[3rem]">
@@ -64,9 +53,7 @@ const MovieDetails = () => {
           </section>
 
           <div className="mr-[5rem]">
-            <p className="text-2xl font-semibold">
-              Releasing Date: {movie?.year}
-            </p>
+            <p className="text-2xl font-semibold">Releasing Date: {movie?.year}</p>
 
             <div>
               {movie?.cast.map((c) => (

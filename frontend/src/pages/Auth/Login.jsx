@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import Loader from "../../component/Loader";
-import { setCredentials } from "../../redux/features/auth/authSlice";
-import { useLoginMutation } from "../../redux/api/users";
-import { toast } from "react-toastify";
+import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import Loader from '../../component/Loader';
+import { setCredentials } from '../../redux/features/auth/authSlice';
+import { useLoginMutation } from '../../redux/api/users';
+import { toast } from 'react-toastify';
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const Login = () => {
 
   const { search } = useLocation();
   const sp = new URLSearchParams(search);
-  const redirect = sp.get("redirect") || "/";
+  const redirect = sp.get('redirect') || '/';
 
   useEffect(() => {
     if (userInfo) {
@@ -47,10 +47,7 @@ const Login = () => {
 
           <form onSubmit={submitHandler} className="container w-[40rem]">
             <div className="my-[2rem]">
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-white"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-white">
                 Email Address
               </label>
               <input
@@ -63,10 +60,7 @@ const Login = () => {
               />
             </div>
             <div className="my-[2rem]">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-white"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-white">
                 Password
               </label>
               <input
@@ -84,16 +78,16 @@ const Login = () => {
               type="submit"
               className="bg-teal-500 text-white px-4 py-2 rounded cursor-pointer my-[1rem]"
             >
-              {isLoading ? "Signing In ..." : "Sign In"}
+              {isLoading ? 'Signing In ...' : 'Sign In'}
             </button>
             {isLoading && <Loader />}
           </form>
 
           <div className="mt-4">
             <p className="text-white">
-              New Customer?{" "}
+              New Customer?{' '}
               <Link
-                to={redirect ? `/register?redirect=${redirect}` : "/register"}
+                to={redirect ? `/register?redirect=${redirect}` : '/register'}
                 className="text-teal-500 hover:underline"
               >
                 Register

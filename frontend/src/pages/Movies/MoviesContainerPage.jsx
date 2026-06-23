@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   useGetNewMoviesQuery,
   useGetTopMoviesQuery,
   useGetRandomMoviesQuery,
-} from "../../redux/api/movies";
+} from '../../redux/api/movies';
 
-import { useFetchGenresQuery } from "../../redux/api/genre";
-import SliderUtil from "../../component/SliderUtil";
+import { useFetchGenresQuery } from '../../redux/api/genre';
+import SliderUtil from '../../component/SliderUtil';
 
 const MoviesContainerPage = () => {
   const { data } = useGetNewMoviesQuery();
@@ -31,7 +31,7 @@ const MoviesContainerPage = () => {
           <button
             key={g._id}
             className={`transition duration-300 ease-in-out hover:bg-gray-200 block p-2 rounded mb-[1rem] text-lg ${
-              selectedGenre === g._id ? "bg-gray-200" : ""
+              selectedGenre === g._id ? 'bg-gray-200' : ''
             }`}
             onClick={() => handleGenreClick(g._id)}
           >

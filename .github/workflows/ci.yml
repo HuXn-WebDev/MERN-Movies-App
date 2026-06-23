@@ -1,0 +1,66 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Lint, Format, Coverage & Build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install frontend dependencies
+        run: npm ci --prefix frontend
+
+      - name: Run backend lint
+        run: npm run lint:backend
+
+      - name: Run frontend lint
+        run: npm run lint:frontend
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Run backend tests with coverage
+        run: npm run test:backend:coverage
+
+      - name: Run frontend tests with coverage
+        run: npm run test:frontend:coverage
+
+      - name: Build frontend assets
+        run: npm run build:frontend
+
+      - name: Upload backend coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: |
+            coverage/lcov.info
+            coverage/cobertura-coverage.xml
+
+      - name: Upload frontend coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: |
+            frontend/coverage/lcov.info
+            frontend/coverage/cobertura-coverage.xml

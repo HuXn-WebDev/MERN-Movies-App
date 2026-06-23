@@ -1,0 +1,22 @@
+FROM node:20-alpine AS builder
+WORKDIR /usr/src/app
+
+# Allow injecting the API URL at build time: pass --build-arg VITE_API_URL
+ARG VITE_API_URL=
+ENV VITE_API_URL=$VITE_API_URL
+
+COPY frontend/package*.json ./
+RUN npm ci
+
+ENV NODE_ENV=production
+
+COPY frontend/ ./
+RUN npm run build
+
+FROM node:20-alpine AS runner
+WORKDIR /usr/src/app
+RUN npm install -g serve
+
+COPY --from=builder /usr/src/app/dist ./dist
+EXPOSE 4173
+CMD ["serve", "-s", "dist", "-l", "4173"]

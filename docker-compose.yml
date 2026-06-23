@@ -1,0 +1,55 @@
+services:
+  mongo:
+    image: mongo:6.0
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - '3000:3000'
+    environment:
+      - PORT=3000
+      - MONGO_URI=mongodb://root:example@mongo:27017/mern-movies?authSource=admin
+      - JWT_SECRET=devsecret
+      - FRONTEND_ORIGIN=http://localhost:4173,http://localhost:5173
+    depends_on:
+      - mongo
+    # Avoid mounting the host repo over the image in production builds,
+    # as it would hide dependencies installed in the image's node_modules.
+    # For development with live reload, consider mounting selectively.
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      args:
+        VITE_API_URL: http://localhost:3000
+    ports:
+      - '4173:4173'
+    depends_on:
+      - backend
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - '9090:9090'
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - '3005:3000'
+    depends_on:
+      - prometheus
+
+volumes:
+  mongo-data:

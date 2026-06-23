@@ -1,0 +1,24 @@
+name: Production Status
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  verify-production:
+    name: Verify Production Deployment
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://mernmovies-web-node-81448.azurewebsites.net
+
+    steps:
+      - name: Verify backend health
+        run: curl --fail --show-error --silent https://mernmovies-api-node-81448.azurewebsites.net/api/v1/health
+
+      - name: Verify movies API
+        run: curl --fail --show-error --silent --output /dev/null https://mernmovies-api-node-81448.azurewebsites.net/api/v1/movies/all-movies
+
+      - name: Verify frontend
+        run: curl --fail --show-error --silent --location --output /dev/null https://mernmovies-web-node-81448.azurewebsites.net

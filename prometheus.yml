@@ -1,0 +1,9 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'movies-backend-production'
+    metrics_path: '/metrics'
+    scheme: 'https'
+    static_configs:
+      - targets: ['mernmovies-api-node-81448.azurewebsites.net']

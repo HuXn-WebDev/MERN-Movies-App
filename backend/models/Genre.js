@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const genreSchema = new mongoose.Schema({
   name: {
@@ -10,4 +10,4 @@ const genreSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("Genre", genreSchema);
+export default mongoose.model('Genre', genreSchema);

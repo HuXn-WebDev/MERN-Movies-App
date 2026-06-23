@@ -1,36 +1,29 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  useCreateMovieMutation,
-  useUploadImageMutation,
-} from "../../redux/api/movies";
-import { useFetchGenresQuery } from "../../redux/api/genre";
-import { toast } from "react-toastify";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useCreateMovieMutation, useUploadImageMutation } from '../../redux/api/movies';
+import { useFetchGenresQuery } from '../../redux/api/genre';
+import { toast } from 'react-toastify';
 
 const CreateMovie = () => {
   const navigate = useNavigate();
 
   const [movieData, setMovieData] = useState({
-    name: "",
+    name: '',
     year: 0,
-    detail: "",
+    detail: '',
     cast: [],
     rating: 0,
     image: null,
-    genre: "",
+    genre: '',
   });
 
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const [
-    createMovie,
-    { isLoading: isCreatingMovie, error: createMovieErrorDetail },
-  ] = useCreateMovieMutation();
+  const [createMovie, { isLoading: isCreatingMovie, error: createMovieErrorDetail }] =
+    useCreateMovieMutation();
 
-  const [
-    uploadImage,
-    { isLoading: isUploadingImage, error: uploadImageErrorDetails },
-  ] = useUploadImageMutation();
+  const [uploadImage, { isLoading: isUploadingImage, error: uploadImageErrorDetails }] =
+    useUploadImageMutation();
 
   const { data: genres, isLoading: isLoadingGenres } = useFetchGenresQuery();
 
@@ -38,7 +31,7 @@ const CreateMovie = () => {
     if (genres) {
       setMovieData((prevData) => ({
         ...prevData,
-        genre: genres[0]?._id || "",
+        genre: genres[0]?._id || '',
       }));
       console.log(genres[0]?._id);
     }
@@ -47,12 +40,12 @@ const CreateMovie = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "genre") {
+    if (name === 'genre') {
       const selectedGenre = genres.find((genre) => genre.name === value);
 
       setMovieData((prevData) => ({
         ...prevData,
-        genre: selectedGenre ? selectedGenre._id : "",
+        genre: selectedGenre ? selectedGenre._id : '',
       }));
     } else {
       setMovieData((prevData) => ({
@@ -76,7 +69,7 @@ const CreateMovie = () => {
         !movieData.cast ||
         !selectedImage
       ) {
-        toast.error("Please fill all required fields");
+        toast.error('Please fill all required fields');
         return;
       }
 
@@ -84,15 +77,15 @@ const CreateMovie = () => {
 
       if (selectedImage) {
         const formData = new FormData();
-        formData.append("image", selectedImage);
+        formData.append('image', selectedImage);
 
         const uploadImageResponse = await uploadImage(formData);
 
         if (uploadImageResponse.data) {
           uploadedImagePath = uploadImageResponse.data.image;
         } else {
-          console.error("Failed to upload image: ", uploadImageErrorDetails);
-          toast.error("Failed to upload image");
+          console.error('Failed to upload image: ', uploadImageErrorDetails);
+          toast.error('Failed to upload image');
           return;
         }
 
@@ -101,22 +94,22 @@ const CreateMovie = () => {
           image: uploadedImagePath,
         });
 
-        navigate("/admin/movies-list");
+        navigate('/admin/movies-list');
 
         setMovieData({
-          name: "",
+          name: '',
           year: 0,
-          detail: "",
+          detail: '',
           cast: [],
           ratings: 0,
           image: null,
-          genre: "",
+          genre: '',
         });
 
-        toast.success("Movie Added To Database");
+        toast.success('Movie Added To Database');
       }
     } catch (error) {
-      console.error("Failed to create movie: ", createMovieErrorDetail);
+      console.error('Failed to create movie: ', createMovieErrorDetail);
       toast.error(`Failed to create movie: ${createMovieErrorDetail?.message}`);
     }
   };
@@ -166,10 +159,8 @@ const CreateMovie = () => {
             <input
               type="text"
               name="cast"
-              value={movieData.cast.join(", ")}
-              onChange={(e) =>
-                setMovieData({ ...movieData, cast: e.target.value.split(", ") })
-              }
+              value={movieData.cast.join(', ')}
+              onChange={(e) => setMovieData({ ...movieData, cast: e.target.value.split(', ') })}
               className="border px-2 py-1 w-full"
             />
           </label>
@@ -201,23 +192,23 @@ const CreateMovie = () => {
             style={
               !selectedImage
                 ? {
-                    border: "1px solid #888",
-                    borderRadius: "5px",
-                    padding: "8px",
+                    border: '1px solid #888',
+                    borderRadius: '5px',
+                    padding: '8px',
                   }
                 : {
-                    border: "0",
-                    borderRadius: "0",
-                    padding: "0",
+                    border: '0',
+                    borderRadius: '0',
+                    padding: '0',
                   }
             }
           >
-            {!selectedImage && "Upload Image"}
+            {!selectedImage && 'Upload Image'}
             <input
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              style={{ display: !selectedImage ? "none" : "block" }}
+              style={{ display: !selectedImage ? 'none' : 'block' }}
             />
           </label>
         </div>
@@ -228,7 +219,7 @@ const CreateMovie = () => {
           className="bg-teal-500 text-white px-4 py-2 rounded"
           disabled={isCreatingMovie || isUploadingImage}
         >
-          {isCreatingMovie || isUploadingImage ? "Creating..." : "Create Movie"}
+          {isCreatingMovie || isUploadingImage ? 'Creating...' : 'Create Movie'}
         </button>
       </form>
     </div>
